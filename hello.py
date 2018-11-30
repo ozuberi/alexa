@@ -31,12 +31,14 @@ def build_PlainSpeech(body):
 
 def build_response(message, session_attributes=None):
     if session_attributes is None:
-        session_attributes={}
+        session_attributes = {}
     response = {}
     response['version'] = '1.0'
     response['sessionAttributes'] = session_attributes
     response['response'] = message
-    return response
+    sys.stderr.write("created response")
+    # sys.stderr.write(response)
+    return response['response']
 
 
 def build_SimpleCard(title, body):
@@ -72,6 +74,7 @@ def continue_dialog():
     message = {}
     message['shouldEndSession'] = False
     message['directives'] = [{'type': 'Dialog.Delegate'}]
+    sys.stderr.write("built message")
     return build_response(message)
 
 
@@ -115,10 +118,10 @@ def trip_intent():
         return continue_dialog()
 
     elif dialog_state == "COMPLETED":
-        return statement("trip_intent", "Have a good trip")
+        return statement("Have a good trip")
 
     else:
-        return statement("trip_intent", "No dialog")
+        return statement("No dialog")
 
 
 ##############################
@@ -127,15 +130,14 @@ def trip_intent():
 
 
 def cancel_intent():
-    return statement("CancelIntent", "You want to cancel")	#don't use CancelIntent as title it causes code reference error during certification
+    return statement("You want to cancel")	#don't use CancelIntent as title it causes code reference error during certification
 
 
 def help_intent():
-    return statement("CancelIntent", "You want help")		#same here don't use CancelIntent
-
+    return statement("You want help")		#same here don't use CancelIntent
 
 def stop_intent():
-    return statement("StopIntent", "You want to stop")		#here also don't use StopIntent
+    return statement("You want to stop")		#here also don't use StopIntent
 
 
 ##############################
@@ -169,7 +171,7 @@ def intent_router():
         sys.stderr.write('trip intent activated')
         return trip_intent()
     else:
-        return statement("made it this far", "body")
+        return statement("made it this far")
 
     # Required Intents
 
