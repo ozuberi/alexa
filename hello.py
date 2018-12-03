@@ -3,6 +3,7 @@
 ##############################
 import sys
 import json
+import requests
 from flask import Flask, render_template
 from flask_ask import Ask, statement, request, question, session, delegate, context
 
@@ -23,14 +24,12 @@ def getCredentials():
     else:
         return statement("no token found")
 
-    r = request.get(URL, headers=HEADER)
+    r = requests.get(URL, headers=HEADER)
     if r.status_code == 200:
         return r.json()
-		#Need to request permission to access location
-    elif r.status_code == 403:
-        return statement("403")
-    else:
-        return question("could not get info")
+	#Need to request permission to access location
+    sys.stderr.write("403 ERROR PLEASE ALLOW PERMISSION")
+    return 403
 
 def addToString(toBeAdded):
     sys.stderr.write(toBeAdded)
@@ -138,10 +137,10 @@ def intent_router():
 	#TO DO
 	#need to check this if statement to make sure it triggers correctly
 	#check to make sure 'statement' is the right way to do it
-    if location == statement:
+    if location == 403:
         sys.stderr.write("FAILEDLOCATION SHOULD BE HERE: ")
         sys.stderr.write(str(location))
-        return statement("Please allow access to your location").consent_card("read::alexa:device:all:address:country_and_postal_code")
+        return statement("Please allow access to your location")
     else:
         sys.stderr.write("LOCATION SHOULD BE HERE: ")
         sys.stderr.write(str(location))
